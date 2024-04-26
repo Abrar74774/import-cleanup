@@ -1,0 +1,16 @@
+{
+  "name": "import-cleanup",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Import cleanup tool for ZIoT",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Abrar74774",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "xlsx": "^0.18.5"
+  }
+}
