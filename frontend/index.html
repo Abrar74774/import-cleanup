@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+</head>
+
+<body>
+    <h2>Upload Excel File</h2>
+    <input type="file" id="fileInput">
+    <button onclick="uploadFile()">Upload</button>
+    <p id="status"></p>
+
+    <script>
+        function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Please select a file!');
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+                const fileData = event.target.result;
+
+                const requestData = {
+                    fileName: file.name,
+                    fileType: file.type,
+                    fileData: Array.from(new Uint8Array(fileData))
+                };
+
+                fetch('/upload', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            document.getElementById('status').innerText = 'File uploaded successfully!';
+                        } else {
+                            document.getElementById('status').innerText = 'Error uploading file.';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('status').innerText = 'Error uploading file.';
+                    });
+            };
+
+            reader.readAsArrayBuffer(file);
+        }
+
+    </script>
+</body>
+
+</html>

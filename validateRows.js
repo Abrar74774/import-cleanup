@@ -22,11 +22,11 @@ export default function validateAddresses(workbook) {
         arrayData[row]["Name"] = "Validated address"
     })
     // =============================================================
-    
+
     return arrayData
 }
 
-export function splitWorksheets(jsonData, rowsPerFile = 10) {
+export function sendFiles(jsonData, rowsPerFile = 10) {
     const group = splitArray(jsonData, 10);
     group.forEach((data, i) => {
         const ws = utils.json_to_sheet(data);
