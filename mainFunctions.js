@@ -28,12 +28,11 @@ export default function validateAddresses(workbook) {
 }
 
 export function splitToCSVFiles(jsonData, rowsPerFile = 10) {
-    const group = splitArray(jsonData, 10);
+    const group = splitArray(jsonData, rowsPerFile);
     const fileList = []
     group.forEach((data, i) => {
         const ws = utils.json_to_sheet(data);
         const csv = utils.sheet_to_csv(ws)
-        console.log(csv)
         fileList.push(csv)
         // Write the workbook to a file
         // const filePath = `.generated_excel_${i + 1}.csv`;
@@ -42,11 +41,12 @@ export function splitToCSVFiles(jsonData, rowsPerFile = 10) {
     return fileList
 }
 
-export function sendFiles(emailAddress, sourceFileName = "addresses", fileList) {
+export function sendFiles(emailAddress = process.env.DEFAULT_RECEIVER_EMAIL, sourceFileName = "addresses", fileList) {
     if (!emailAddress) {
         console.error('function sendFiles require an email address')
         throw Error('Email address not found')
     }
+    sourceFileName = sourceFileName.split(".").slice(0, -1).join('.')
     const message = {
         text: 'File attached, for testing.',
         subject: 'Address validation results',

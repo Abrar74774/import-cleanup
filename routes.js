@@ -31,8 +31,11 @@ router.get('/getFile', async (req, res) => {
 );
 
 router.post('/upload', (req, res) => {
-	const fileData = req.body.fileData;
-	const fileName = req.body.fileName;
+	const { fileData, fileName, email } = req.body;
+if (!fileData || !fileName /*|| ! email*/) {
+		res.status(400).send("Missing required parameters")
+		return
+	}
 
 	// Write the file data to a temporary file
 	const temp = `temp_${fileName}`;
@@ -48,7 +51,7 @@ router.post('/upload', (req, res) => {
 		const workbook = read(buf);
 
 		if (!validRows(workbook)) {
-			res.status(400).json({ "error": "invalid rows" })
+			res.status(400).send("Error: invalid rows")
 			fs.unlinkSync(temp);
 			return
 		}
@@ -59,7 +62,7 @@ router.post('/upload', (req, res) => {
 		const fileList = splitToCSVFiles(validatedData, 500);
 		try {
 			const emailResponse = await sendFiles("abrarshahriarhossain@gmail.com", fileName, fileList)
-			console.log('Email sent:', emailResponse);
+			console.log('Email sent:', "emailResponse");
 			res.status(200).send('File uploaded and email sent');
 		} catch (e) {
 			console.error(e)

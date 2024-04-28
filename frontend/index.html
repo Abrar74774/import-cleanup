@@ -9,6 +9,9 @@
 
 <body>
     <h2>Upload Excel File</h2>
+    <label for="email">Enter Email</label>
+    <input type="text" placeholder="your@email.com" id="email">
+    <label for="fileInput">Upload excel file</label>
     <input type="file" id="fileInput">
     <button onclick="uploadFile()">Upload</button>
     <p id="status"></p>
@@ -30,7 +33,7 @@
 
                 const requestData = {
                     fileName: file.name,
-                    fileType: file.type,
+                    email: document.querySelector("#email").value,
                     fileData: Array.from(new Uint8Array(fileData))
                 };
 
@@ -41,12 +44,9 @@
                     },
                     body: JSON.stringify(requestData)
                 })
+                    .then(res => res.text())
                     .then(response => {
-                        if (response.ok) {
-                            document.getElementById('status').innerText = 'File uploaded successfully!';
-                        } else {
-                            document.getElementById('status').innerText = 'Error uploading file.';
-                        }
+                        document.getElementById('status').innerText = response;
                     })
                     .catch(error => {
                         console.error('Error:', error);
