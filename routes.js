@@ -1,45 +1,15 @@
 import express, { response } from 'express';
 import { readFileSync } from "fs";
 import { read } from "xlsx/xlsx.mjs";
-import validateAddresses, { sendFiles, splitToCSVFiles, validRows } from './mainFunctions.js';
 import fs from 'fs'
+import validateAddresses from './main-functions/validateAddresses.js';
+import areColsValid from './main-functions/areColsValid.js';
+import splitToCSVFiles from './main-functions/splitToCSVFiles.js';
+import sendFiles from './main-functions/sendFiles.js';
 
 const router = express.Router();
 
 router.get('/', express.static('./frontend/'))
-
-router.get('/getFile', async (req, res) => {
-	try {
-		// Read the Excel file
-		const buf = readFileSync("dupli_2.xlsx");
-		const workbook = read(buf);
-
-		if (!validRows(workbook)) {
-			res.status(400).json({ "error": "invalid rows" })
-			return
-		}
-
-		const data = validateAddresses(workbook)
-
-		// Respond with the data
-		res.json(data);
-	} catch (err) {
-		console.error('Error reading Excel file:', err);
-		res.status(500).send('Error reading Excel file');
-	}
-}
-);
-
-router.get('/sendRequest', async (req, res) => {
-	const hereRes = await fetch(`https://geocode.search.hereapi.com/v1/geocode?q=240+Washington+St.%2C+Boston&limit=1&apiKey=${process.env.HERE_API_KEY}`, 
-	{
-		method: "GET",
-	})
-	const json = await hereRes.json()
-	console.log(json)
-	res.json(json)
-
-})
 
 router.post('/upload', (req, res) => {
 	const { fileData, fileName, email } = req.body;
@@ -61,7 +31,7 @@ if (!fileData || !fileName /*|| ! email*/) {
 		const buf = readFileSync(temp);
 		const workbook = read(buf);
 
-		if (!validRows(workbook)) {
+		if (!areColsValid(workbook)) {
 			res.status(400).send("Error: invalid rows")
 			fs.unlinkSync(temp);
 			return
@@ -69,19 +39,17 @@ if (!fileData || !fileName /*|| ! email*/) {
 		
 		// Read the uploaded Excel file
 
-		const validatedData = await validateAddresses(workbook);
-		console.log(validatedData)
-		res.json(validatedData)
-		// const fileList = splitToCSVFiles(validatedData, 500);
-		// try {
-		// 	const emailResponse = await sendFiles("abrarshahriarhossain@gmail.com", fileName, fileList)
-		// 	console.log('Email sent:', "emailResponse");
-		// 	res.status(200).send('File uploaded and email sent');
-		// } catch (e) {
-		// 	console.error(e)
-		// } finally {
-		// 	fs.unlinkSync(temp);
-		// }
+		try {
+			const validatedData = await validateAddresses(workbook, true); // set second param as false to send reqs to Here Api
+			const fileList = splitToCSVFiles(validatedData, 500);
+			const emailResponse = await sendFiles(process.env.DEFAULT_RECEIVER_EMAIL, fileName, fileList)
+			console.log('Email sent:', emailResponse);
+			res.status(200).send('File uploaded and email sent');
+		} catch (e) {
+			console.error(e)
+		} finally {
+			fs.unlinkSync(temp);
+		}
 	});
 });
 
