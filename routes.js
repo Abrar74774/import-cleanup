@@ -11,9 +11,25 @@ const router = express.Router();
 
 router.get('/', express.static('./frontend/'))
 
+router.get('/batch', async (req, res) => {
+	// For testing batch geocoding api (api not included in Here Base Plan)
+	const hereRes = await fetch(`https://batch.geocoder.ls.hereapi.com/6.2/jobs?apiKey=${process.env.HERE_API_KEY}&indelim=%7C&outdelim=%7C&action=run&outcols=displayLatitude,displayLongitude,locationLabel,houseNumber,street,district,city,postalCode,county,state,country&outputcombined=false`,
+		{
+			method: "POST",
+			body: `recId|searchText|country
+	0001|Invalidenstraße 116 10115 Berlin|DEU
+	0002|Am Kronberger Hang 8 65824 Schwalbach|DEU
+	0003|425 W Randolph St Chicago IL 60606|USA
+	0004|One Main Street Cambridge MA 02142|USA
+	0005|200 S Mathilda Ave Sunnyvale CA 94086|USA`
+		})
+	const json = await hereRes.json()
+	res.json(json)
+})
+
 router.post('/upload', (req, res) => {
 	const { fileData, fileName, email } = req.body;
-if (!fileData || !fileName || !email) {
+	if (!fileData || !fileName || !email) {
 		res.status(400).send("Missing required parameters")
 		return
 	}
@@ -36,7 +52,7 @@ if (!fileData || !fileName || !email) {
 			fs.unlinkSync(temp);
 			return
 		}
-		
+
 		// Read the uploaded Excel file
 
 		try {
