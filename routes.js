@@ -40,9 +40,10 @@ if (!fileData || !fileName /*|| ! email*/) {
 		// Read the uploaded Excel file
 
 		try {
-			const validatedData = await validateAddresses(workbook, true); // set second param as false to send reqs to Here Api
-			const fileList = splitToCSVFiles(validatedData, 500);
-			const emailResponse = await sendFiles(process.env.DEFAULT_RECEIVER_EMAIL, fileName, fileList)
+			const results = await validateAddresses(workbook, true); // set second param as false to send reqs to Here Api
+			const validatedfileList = splitToCSVFiles(results.validated, 500);
+			const unvalidatedfileList = splitToCSVFiles(results.unvalidated, 500);
+			const emailResponse = await sendFiles(process.env.DEFAULT_RECEIVER_EMAIL, fileName, validatedfileList, unvalidatedfileList)
 			console.log('Email sent:', emailResponse);
 			res.status(200).send('File uploaded and email sent');
 		} catch (e) {

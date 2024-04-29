@@ -30,5 +30,5 @@ export default async function validateAddresses(workbook, testing = true) {
     }
     // =============================================================
     console.log(validated)
-    return validated
+    return {validated, unvalidated}
 }
