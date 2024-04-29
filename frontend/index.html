@@ -9,6 +9,9 @@
 
 <body>
     <h2>Upload Excel File</h2>
+    <div id="dropContainer" style="border:1px solid black;height:100px;">
+        Drop Here
+    </div>
     <label for="email">Enter Email</label>
     <input type="text" placeholder="your@email.com" id="email">
     <label for="fileInput">Upload excel file</label>
@@ -17,6 +20,23 @@
     <p id="status"></p>
 
     <script>
+        
+        dropContainer.ondragover = dropContainer.ondragenter = function (evt) {
+            evt.preventDefault();
+        };
+
+        dropContainer.ondrop = function (evt) {
+            evt.preventDefault()
+            fileInput.files = evt.dataTransfer.files;
+
+            // If you want to use some of the dropped files
+            const dT = new DataTransfer();
+            dT.items.add(evt.dataTransfer.files[0]);
+            dT.items.add(evt.dataTransfer.files[3]);
+            fileInput.files = dT.files;
+
+            evt.preventDefault();
+        };
         function uploadFile() {
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
