@@ -1,5 +1,4 @@
 import { utils } from 'xlsx/xlsx.mjs'
-import { writeFileSync } from "fs";
 import format from './format.js';
 import mailchimpClient from './mailchimp.cjs'
 
@@ -12,25 +11,32 @@ export function validRows(workbook) {
     return checker(columns, format)
 }
 
-export default function validateAddresses(workbook) {
+export default async function validateAddresses(workbook) {
     const sheetName = workbook.SheetNames[0]; // Assuming you want to read the first sheet
     const sheet = workbook.Sheets[sheetName];
     const arrayData = utils.sheet_to_json(sheet, { defval: "" })
 
 
     // ============== Enter Validation API here ===================
-    const validated = [1, 3, 30, 33, 44].forEach(row => {
-        arrayData[row]["Name"] = "Validated address"
-    })
+    let validated = []
+    let unvalidated = []
+    await Promise.all(arrayData.map(async (row) => {
+        const hereRes = await fetch(`https://geocode.search.hereapi.com/v1/geocode?q=${encodeURIComponent(row.Address)}&limit=1&apiKey=${process.env.HERE_API_KEY}`)
+        const json = await hereRes.json()
+        console.log(json.items)
+        if (!json.items) unvalidated.push(row)
+        else validated.push({...row, Address: json.items[0].title})
+    }))
     // =============================================================
-
-    return arrayData
+    console.log(validated)
+    return validated
 }
 
 export function splitToCSVFiles(jsonData, rowsPerFile = 10) {
     const group = splitArray(jsonData, rowsPerFile);
     const fileList = []
     group.forEach((data, i) => {
+        data = data.sort(({Adress : a}, {Adress: b}) =>  ('' + a).localeCompare(b))
         const ws = utils.json_to_sheet(data);
         const csv = utils.sheet_to_csv(ws)
         fileList.push(csv)

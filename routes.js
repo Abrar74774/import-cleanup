@@ -30,6 +30,17 @@ router.get('/getFile', async (req, res) => {
 }
 );
 
+router.get('/sendRequest', async (req, res) => {
+	const hereRes = await fetch(`https://geocode.search.hereapi.com/v1/geocode?q=240+Washington+St.%2C+Boston&limit=1&apiKey=${process.env.HERE_API_KEY}`, 
+	{
+		method: "GET",
+	})
+	const json = await hereRes.json()
+	console.log(json)
+	res.json(json)
+
+})
+
 router.post('/upload', (req, res) => {
 	const { fileData, fileName, email } = req.body;
 if (!fileData || !fileName /*|| ! email*/) {
@@ -58,17 +69,19 @@ if (!fileData || !fileName /*|| ! email*/) {
 		
 		// Read the uploaded Excel file
 
-		const validatedData = validateAddresses(workbook);
-		const fileList = splitToCSVFiles(validatedData, 500);
-		try {
-			const emailResponse = await sendFiles("abrarshahriarhossain@gmail.com", fileName, fileList)
-			console.log('Email sent:', "emailResponse");
-			res.status(200).send('File uploaded and email sent');
-		} catch (e) {
-			console.error(e)
-		} finally {
-			fs.unlinkSync(temp);
-		}
+		const validatedData = await validateAddresses(workbook);
+		console.log(validatedData)
+		res.json(validatedData)
+		// const fileList = splitToCSVFiles(validatedData, 500);
+		// try {
+		// 	const emailResponse = await sendFiles("abrarshahriarhossain@gmail.com", fileName, fileList)
+		// 	console.log('Email sent:', "emailResponse");
+		// 	res.status(200).send('File uploaded and email sent');
+		// } catch (e) {
+		// 	console.error(e)
+		// } finally {
+		// 	fs.unlinkSync(temp);
+		// }
 	});
 });
 
