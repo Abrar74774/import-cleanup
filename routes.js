@@ -13,7 +13,7 @@ router.get('/', express.static('./frontend/'))
 
 router.post('/upload', (req, res) => {
 	const { fileData, fileName, email } = req.body;
-if (!fileData || !fileName /*|| ! email*/) {
+if (!fileData || !fileName || !email) {
 		res.status(400).send("Missing required parameters")
 		return
 	}
