@@ -3,7 +3,7 @@ import pThrottle from 'p-throttle';
 
 
 const throttle = pThrottle({
-	limit: 4,
+	limit: 10,
 	interval: 1000
 });
 

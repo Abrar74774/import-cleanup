@@ -54,6 +54,7 @@ router.post('/upload', (req, res) => {
 		}
 
 		// Read the uploaded Excel file
+		res.status(200).send('File uploaded. Sending email');
 
 		try {
 			const results = await validateAddresses(workbook, false); // set second param as false to send reqs to Here Api
@@ -61,7 +62,6 @@ router.post('/upload', (req, res) => {
 			const unvalidatedfileList = splitToCSVFiles(results.unvalidated, 500);
 			const emailResponse = await sendFiles(process.env.DEFAULT_RECEIVER_EMAIL, fileName, validatedfileList, unvalidatedfileList)
 			console.log('Email sent:', emailResponse);
-			res.status(200).send('File uploaded and email sent');
 		} catch (e) {
 			console.error(e)
 		} finally {
