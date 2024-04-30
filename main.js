@@ -3,7 +3,7 @@ import express from 'express';
 import path from 'path';
 import routes from './routes.js';
 import { config } from 'dotenv';
-config()
+config({ path: './config/.env'}) // Create the .env file
 
 const app = express();
 
@@ -18,7 +18,7 @@ app.use('/', routes);
 
 
 const PORT = process.env.PORT || 3003;
-
+console.log(process.env.PORT)
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

@@ -4,7 +4,7 @@
 
 <ol>
 <li>Run `npm i`</li>
-<li>Create a .env file and include the following variables:
+<li>Create a .env file inside config/ and include the following variables:
     <ul>
         <li>MANDRILL_API_KEY</li>
         <li>HERE_API_KEY</li>

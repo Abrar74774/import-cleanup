@@ -1,5 +1,5 @@
 
-const exportConfigs = {
+const emailConfigs = {
     text: 'File attached, for testing.',
     subject: 'Address validation results',
     from_email: 'ziot@zenduit.com',
