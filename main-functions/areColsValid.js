@@ -1,5 +1,5 @@
 import { utils } from "xlsx";
-import format from "../format.js";
+import format from "../config/format.js";
 
 const checker = (arr, target) => target.every(v => arr.includes(v));
 

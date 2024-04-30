@@ -1,3 +1,4 @@
+import emailConfigs from '../config/emailConfigs.js';
 import mailchimpClient from '../mailchimp.cjs'
 export default function sendFiles(emailAddress = process.env.DEFAULT_RECEIVER_EMAIL, sourceFileName = "addresses", validatedFileList, unvalidatedfileList) {
     if (!emailAddress) {
@@ -6,10 +7,7 @@ export default function sendFiles(emailAddress = process.env.DEFAULT_RECEIVER_EM
     }
     sourceFileName = sourceFileName.split(".").slice(0, -1).join('.')
     const message = {
-        text: 'File attached, for testing.',
-        subject: 'Address validation results',
-        from_email: 'ziot@zenduit.com',
-        from_name: 'ZIoT',
+        ...emailConfigs,
         to: [{
             email: emailAddress,
             type: 'to'
