@@ -1,3 +1,7 @@
+# frontend directory (is a separate git repo)
+import-validation-tool
+
+
 # Logs
 logs
 *.log

@@ -11,6 +11,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(process.env.PATH_TO_FRONTEND || './frontend'))
 
 // Routes
 app.use('/', routes);

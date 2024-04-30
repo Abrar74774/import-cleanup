@@ -9,7 +9,6 @@ import sendFiles from './main-functions/sendFiles.js';
 
 const router = express.Router();
 
-router.get('/', express.static('./frontend/'))
 
 router.get('/batch', async (req, res) => {
 	// For testing batch geocoding api (api not included in Here Base Plan)
