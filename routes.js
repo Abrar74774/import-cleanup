@@ -46,11 +46,11 @@ router.post('/upload', (req, res) => {
 		const buf = readFileSync(temp);
 		const workbook = read(buf);
 
-		if (!areColsValid(workbook)) {
-			res.status(400).send("Error: invalid rows")
-			fs.unlinkSync(temp);
-			return
-		}
+		// if (!areColsValid(workbook)) {
+		// 	res.status(400).send("Error: invalid rows")
+		// 	fs.unlinkSync(temp);
+		// 	return
+		// }
 
 		// Read the uploaded Excel file
 		res.status(200).send('File uploaded. Sending email');

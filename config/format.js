@@ -1,2 +1,2 @@
-const format = ["Name","Address","Unit Number","Radius","Notes","Contact Name","Email","Phone","Open From","Open To","Stop Duration (mins)"]
+const format = ["Address"]
 export default format;
