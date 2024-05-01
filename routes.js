@@ -6,6 +6,9 @@ import validateAddresses from './main-functions/validateAddresses.js';
 import areColsValid from './main-functions/areColsValid.js';
 import splitToCSVFiles from './main-functions/splitToCSVFiles.js';
 import sendFiles from './main-functions/sendFiles.js';
+import fixCols from './main-functions/fixCols.js';
+import { utils } from 'xlsx';
+
 
 const router = express.Router();
 
@@ -45,10 +48,16 @@ router.post('/upload', (req, res) => {
 
 		const buf = readFileSync(temp);
 		const workbook = read(buf);
+		const sheetName = workbook.SheetNames[0]; // Assuming you want to read the first sheet
+		const sheet = workbook.Sheets[sheetName];
+		let data = utils.sheet_to_json(sheet, { defval: "" });
 
-		if (!areColsValid(workbook)) {
-			res.status(400).send("Error: invalid rows")
-			fs.unlinkSync(temp);
+		if (!areColsValid(data)) {
+			data = fixCols(data)
+		}
+
+		if (!data.every(row => row.Address && row.Address.length)) {
+			res.status(400).send('\'Address\' not found')
 			return
 		}
 
@@ -56,9 +65,9 @@ router.post('/upload', (req, res) => {
 		res.status(200).send('File uploaded. Sending email');
 
 		try {
-			const results = await validateAddresses(workbook, false); // set second param as false to send reqs to Here Api
-			const validatedfileList = splitToCSVFiles(results.validated, 500);
-			const unvalidatedfileList = splitToCSVFiles(results.unvalidated, 500);
+			const results = await validateAddresses(data, false); // set second param as false to send reqs to Here Api
+			const validatedfileList = splitToCSVFiles(results.validated, 250);
+			const unvalidatedfileList = splitToCSVFiles(results.unvalidated, 250);
 			const emailResponse = await sendFiles(process.env.DEFAULT_RECEIVER_EMAIL, fileName, validatedfileList, unvalidatedfileList)
 			console.log('Email sent:', emailResponse);
 		} catch (e) {
