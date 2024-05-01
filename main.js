@@ -20,5 +20,5 @@ app.use('/', routes);
 const PORT = process.env.PORT || 3003;
 console.log(process.env.PORT)
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Frontend served on  http://localhost:${PORT}`);
 });

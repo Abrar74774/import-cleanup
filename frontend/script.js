@@ -6,15 +6,18 @@ dropContainer.ondragover = dropContainer.ondragenter = function (evt) {
 dropContainer.ondrop = function (evt) {
     evt.preventDefault()
     fileInput.files = evt.dataTransfer.files;
-
+    
     // If you want to use some of the dropped files
     const dT = new DataTransfer();
     dT.items.add(evt.dataTransfer.files[0]);
     dT.items.add(evt.dataTransfer.files[3]);
     fileInput.files = dT.files;
-
     evt.preventDefault();
 };
+
+document.getElementById("fileInput").addEventListener('change', () => {
+    document.getElementById("filename").innerText =  document.querySelector('input[type=file]').files[0].name
+})
 function uploadFile() {
     const fileInput = document.getElementById('fileInput');
     const file = fileInput.files[0];
