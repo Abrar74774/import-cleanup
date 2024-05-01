@@ -57,6 +57,7 @@ router.post('/upload', (req, res) => {
 		}
 
 		if (!data.every(row => row.Address && row.Address.length)) {
+			fs.unlinkSync(temp);
 			res.status(400).send('\'Address\' not found')
 			return
 		}
