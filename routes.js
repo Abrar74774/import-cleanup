@@ -8,6 +8,7 @@ import splitToCSVFiles from './main-functions/splitToCSVFiles.js';
 import sendFiles from './main-functions/sendFiles.js';
 import fixCols from './main-functions/fixCols.js';
 import { utils } from 'xlsx';
+import format from './config/format.js';
 
 
 const router = express.Router();
@@ -27,6 +28,15 @@ router.get('/batch', async (req, res) => {
 		})
 	const json = await hereRes.json()
 	res.json(json)
+})
+
+router.get('/getTemplate', async (req, res) => {
+	const colHeaders = [format]
+	const sheet = utils.aoa_to_sheet(colHeaders)
+	const csv = utils.sheet_to_csv(sheet)
+	fs.writeFile("format.csv", csv, () => {
+		res.download('format.csv');
+	})
 })
 
 router.post('/upload', (req, res) => {
