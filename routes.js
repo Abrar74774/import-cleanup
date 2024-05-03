@@ -31,11 +31,15 @@ router.get('/batch', async (req, res) => {
 })
 
 router.get('/getTemplate', async (req, res) => {
-	const colHeaders = [format]
-	const sheet = utils.aoa_to_sheet(colHeaders)
+	const rowsArray = [format]
+	rowsArray.push(['John Doe', '123 Main St', '101', '50', 'Some notes here'])
+	rowsArray.push(['Jane Smith', '456 Elm St', '202', '40', 'Additional notes'])
+
+	const sheet = utils.aoa_to_sheet(rowsArray)
 	const csv = utils.sheet_to_csv(sheet)
 	fs.writeFile("format.csv", csv, () => {
 		res.download('format.csv');
+		fs.unlinkSync("format.csv")
 	})
 })
 

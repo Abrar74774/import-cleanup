@@ -1,6 +1,6 @@
 
 const dotenv = require('dotenv')
-dotenv.config({ path: './config/.env'})
+dotenv.config()
 const mailchimpClient = require("@mailchimp/mailchimp_transactional")(
     process.env.MANDRILL_API_KEY
 );

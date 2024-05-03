@@ -3,7 +3,7 @@ import express from 'express';
 import path from 'path';
 import routes from './routes.js';
 import { config } from 'dotenv';
-config({ path: './config/.env'}) // Create the .env file
+config() // Create the .env file
 
 const app = express();
 

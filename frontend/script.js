@@ -1,4 +1,6 @@
 
+const fileName = document.getElementById("filename")
+
 dropContainer.ondragover = dropContainer.ondragenter = function (evt) {
     evt.preventDefault();
 };
@@ -16,14 +18,37 @@ dropContainer.ondrop = function (evt) {
 };
 
 document.getElementById("fileInput").addEventListener('change', () => {
-    document.getElementById("filename").innerText =  document.querySelector('input[type=file]').files[0].name
+    fileName.innerText =  document.querySelector('input[type=file]').files[0].name
 })
+
+function downloadTemplate(e) {
+    console.log("clicked")
+    fetch('/getTemplate').then( res => res.blob() )
+    .then( blob => {
+        let fileURL = URL.createObjectURL(blob);
+
+        // create <a> element dynamically
+        let fileLink = document.createElement('a');
+        fileLink.href = fileURL;
+
+        // suggest a name for the downloaded file
+        fileLink.download = 'template.csv';
+
+        // simulate click
+        fileLink.click();
+    }).catch(err => console.error(err))
+}
 function uploadFile() {
     const fileInput = document.getElementById('fileInput');
     const file = fileInput.files[0];
 
     if (!file) {
         alert('Please select a file!');
+        return;
+    }
+
+    if (!document.getElementById("email").value.length) {
+        alert('Please enter email');
         return;
     }
 
@@ -47,9 +72,11 @@ function uploadFile() {
         })
             .then(res => res.text())
             .then(response => {
+                document.getElementById('status').classList.remove('hidden')
                 document.getElementById('status').innerText = response;
             })
             .catch(error => {
+                document.getElementById('status').classList.remove('hidden')
                 console.error('Error:', error);
                 document.getElementById('status').innerText = 'Error uploading file.';
             });
