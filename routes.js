@@ -39,7 +39,7 @@ router.get('/getTemplate', async (req, res) => {
 	const csv = utils.sheet_to_csv(sheet)
 	fs.writeFile("format.csv", csv, () => {
 		res.download('format.csv');
-		fs.unlinkSync("format.csv")
+		// fs.unlinkSync("format.csv")
 	})
 })
 
